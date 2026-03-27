@@ -13,7 +13,7 @@ const serverEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']),
   DATABASE_URL: z.string().min(1),
   BETTER_AUTH_SECRET: z.string().min(1),
-  VITE_APP_URL: z.url(),
+  APP_URL: z.url(),
 })
 
 const parsed = serverEnvSchema.safeParse(process.env)
@@ -29,5 +29,5 @@ export const config = {
   NODE_ENV: env.NODE_ENV,
   DATABASE_URL: env.DATABASE_URL,
   BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
-  APP_URL: env.VITE_APP_URL,
+  APP_URL: env.APP_URL,
 }

@@ -11,8 +11,6 @@ RUN pnpm install --frozen-lockfile
 FROM base AS build
 COPY --from=deps /app .
 COPY . .
-ARG VITE_APP_URL
-ENV VITE_APP_URL=$VITE_APP_URL
 RUN pnpm --filter @repo/web build
 
 FROM base AS production

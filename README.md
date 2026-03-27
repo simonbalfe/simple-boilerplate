@@ -82,7 +82,7 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://user:password@host:5432/dbname
       - BETTER_AUTH_SECRET=generate-a-random-string-at-least-32-chars
-      - VITE_APP_URL=https://yourdomain.com
+      - APP_URL=https://yourdomain.com
 ```
 
 Replace the values:
@@ -91,7 +91,7 @@ Replace the values:
 |---|---|
 | `DATABASE_URL` | Postgres connection string from step 2 |
 | `BETTER_AUTH_SECRET` | Random string, 32+ chars (run `openssl rand -hex 32`) |
-| `VITE_APP_URL` | Your production URL, e.g. `https://app.yourdomain.com` |
+| `APP_URL` | Your production URL, e.g. `https://app.yourdomain.com` |
 
 Then point your domain to the app and expose port `3000`.
 
@@ -107,7 +107,7 @@ Your image is on GitHub Container Registry (private). In your PaaS, add a Docker
 
 ```bash
 cp .env.example .env
-# Fill in VITE_APP_URL and DEPLOY_WEBHOOK_URL (copy the webhook URL from your PaaS)
+# Fill in DEPLOY_WEBHOOK_URL (copy the webhook URL from your PaaS)
 ./scripts/setup-secrets.sh
 ```
 

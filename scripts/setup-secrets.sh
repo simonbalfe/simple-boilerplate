@@ -24,9 +24,6 @@ set +a
 
 echo "Pushing secrets to GitHub..."
 
-gh secret set VITE_APP_URL --body "$VITE_APP_URL"
-echo "  VITE_APP_URL set"
-
 if [ -n "${DEPLOY_WEBHOOK_URL:-}" ]; then
   gh secret set DEPLOY_WEBHOOK_URL --body "$DEPLOY_WEBHOOK_URL"
   echo "  DEPLOY_WEBHOOK_URL set"
