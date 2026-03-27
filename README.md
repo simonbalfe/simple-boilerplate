@@ -35,12 +35,8 @@ Routes must use **method chaining** (not separate instances) for types to flow t
 
 ```
 apps/
-  api/          Hono API server (routes, middleware, services)
+  api/          Hono API server (routes, auth, db, config)
   web/          React SPA (TanStack Router, TanStack Query)
-packages/
-  auth/         Better Auth config
-  config/       Env validation (Zod)
-  db/           Drizzle ORM schema + migrations
 server.ts       Production entry point (serves API + static SPA)
 ```
 
