@@ -17,7 +17,7 @@ export function AuthPage() {
   const [submitting, setSubmitting] = useState(false)
 
   if (loading) return null
-  if (user) return <Navigate to="/workflow" />
+  if (user) return <Navigate to="/dashboard" />
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,7 +37,7 @@ export function AuthPage() {
           return
         }
       }
-      window.location.href = '/workflow'
+      window.location.href = '/dashboard'
     } finally {
       setSubmitting(false)
     }

@@ -14,7 +14,6 @@ const serverEnvSchema = z.object({
   DATABASE_URL: z.string().min(1),
   BETTER_AUTH_SECRET: z.string().min(1),
   APP_URL: z.url(),
-  ANTHROPIC_API_KEY: z.string().optional(),
 })
 
 const parsed = serverEnvSchema.safeParse(process.env)
@@ -31,5 +30,4 @@ export const config = {
   DATABASE_URL: env.DATABASE_URL,
   BETTER_AUTH_SECRET: env.BETTER_AUTH_SECRET,
   APP_URL: env.APP_URL,
-  ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY,
 }

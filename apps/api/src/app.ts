@@ -8,7 +8,6 @@ import { authRoutes } from './routes/auth'
 import { serverInfoRoutes } from './routes/server-info'
 import { todoRoutes } from './routes/todos'
 import { userRoutes } from './routes/users'
-import { workflowRoutes } from './routes/workflow'
 
 interface OpenAPISchema {
   paths?: Record<string, unknown>
@@ -36,7 +35,6 @@ const app = new Hono()
   .route('/', todoRoutes)
   .route('/', userRoutes)
   .route('/', serverInfoRoutes)
-  .route('/', workflowRoutes)
 
 app.get('/app-openapi', async (c) => {
   const handler = openAPIRouteHandler(app, {
