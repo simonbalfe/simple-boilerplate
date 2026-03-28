@@ -3,15 +3,15 @@ import { authClient } from '@shared/lib/auth-client'
 import { Button } from '@ui/components/button'
 import { cn } from '@ui/lib/utils'
 import { Link, Outlet, useLocation } from '@tanstack/react-router'
-import { Home, LogOut, Settings } from 'lucide-react'
+import { Workflow, Settings, LogOut } from 'lucide-react'
 
 const navItems = [
-  { title: 'Dashboard', to: '/dashboard' as const, icon: Home },
+  { title: 'Workflow', to: '/workflow' as const, icon: Workflow },
   { title: 'Settings', to: '/settings' as const, icon: Settings },
 ]
 
 const PAGE_TITLES: Record<string, string> = {
-  '/dashboard': 'Dashboard',
+  '/workflow': 'Lead Gen Workflow',
   '/settings': 'Settings',
 }
 
@@ -28,7 +28,7 @@ export function DashboardLayout() {
     <div className="flex h-screen">
       <aside className="flex w-56 shrink-0 flex-col border-r bg-card p-4">
         <div className="mb-6 px-2">
-          <span className="text-sm font-semibold tracking-tight">App</span>
+          <span className="text-sm font-semibold tracking-tight">LeadGen</span>
         </div>
 
         <nav className="flex flex-1 flex-col gap-1">
@@ -65,7 +65,7 @@ export function DashboardLayout() {
             {PAGE_TITLES[location.pathname] ?? ''}
           </span>
         </header>
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-hidden p-6">
           <Outlet />
         </main>
       </div>

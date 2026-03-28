@@ -11,8 +11,11 @@
     "db:push": "pnpm --filter @repo/api db:push"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.64",
     "@hono/node-server": "^1.14.3",
+    "@mastra/core": "^1.17.0",
     "@repo/api": "workspace:*",
+    "ai": "^6.0.141",
     "hono": "^4.7.0"
   },
   "devDependencies": {

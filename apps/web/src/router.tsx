@@ -8,8 +8,8 @@ import {
 import { AuthGuard } from '@shared/components/auth-guard'
 import { DashboardLayout } from '@shared/components/layout/dashboard-layout'
 import { AuthPage } from '@/pages/auth'
-import { DashboardPage } from '@/pages/dashboard'
 import { SettingsPage } from '@/pages/settings'
+import { WorkflowPage } from '@/pages/workflow'
 
 const rootRoute = createRootRoute({
   component: Outlet,
@@ -31,10 +31,10 @@ const authenticatedRoute = createRoute({
   ),
 })
 
-const dashboardRoute = createRoute({
+const workflowRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
-  path: '/dashboard',
-  component: DashboardPage,
+  path: '/workflow',
+  component: WorkflowPage,
 })
 
 const settingsRoute = createRoute({
@@ -46,12 +46,12 @@ const settingsRoute = createRoute({
 const catchAllRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '$',
-  component: () => <Navigate to="/dashboard" />,
+  component: () => <Navigate to="/workflow" />,
 })
 
 const routeTree = rootRoute.addChildren([
   authRoute,
-  authenticatedRoute.addChildren([dashboardRoute, settingsRoute]),
+  authenticatedRoute.addChildren([workflowRoute, settingsRoute]),
   catchAllRoute,
 ])
 
