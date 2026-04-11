@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '..', '..', '.env'))
 
-app = FastAPI(title='Reddit Service')
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
