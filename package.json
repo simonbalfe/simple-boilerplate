@@ -8,7 +8,9 @@
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "db:generate": "pnpm --filter @repo/api db:generate",
-    "db:push": "pnpm --filter @repo/api db:push"
+    "db:push": "pnpm --filter @repo/api db:push",
+    "python:setup": "cd apps/python && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt",
+    "python:dev": "cd apps/python && .venv/bin/uvicorn src.main:app --reload --port 3002"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.3",
