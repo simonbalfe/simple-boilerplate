@@ -1,41 +1,57 @@
 # Simple Boilerplate
 
-Hono API + React SPA + Drizzle ORM + Better Auth + TanStack Router in a single deployable container.
+Hono host + oRPC API + React SPA + Drizzle ORM + Better Auth + TanStack Router in a single deployable container.
 
 ## Stack
 
-- **API**: Hono with typed RPC client (`hono/client`)
-- **Frontend**: React + TanStack Router + TanStack Query
-- **Auth**: Better Auth
+- **API**: oRPC procedures mounted on Hono, typed end-to-end (`@orpc/server`)
+- **Frontend**: React + TanStack Router + TanStack Query (`@orpc/tanstack-query`)
+- **Auth**: Better Auth (own Hono handler)
 - **Database**: Drizzle ORM + Postgres
 - **Styling**: Tailwind CSS + Radix UI
 
-## Hono RPC
+## oRPC
 
-The API exports its type (`AppRouter`) and the frontend imports it to get a fully typed API client with zero codegen.
+The API defines a router of procedures and exports its type (`AppRouter`). The frontend builds a typed client from that type with zero codegen, plus first-class TanStack Query helpers. Unlike Hono's `hc`, oRPC derives types from each procedure's input/output schema, so inference stays fast as the router grows.
 
 ```ts
-// API (apps/api/src/app.ts)
-const app = new Hono().basePath('/api').route('/', todoRoutes)
-export type AppRouter = typeof app
+// API (apps/api/src/orpc/router.ts)
+export const router = {
+  todos: {
+    list: protectedProcedure.handler(() => ({ success: true, todos: listTodos() })),
+    create: protectedProcedure.input(z.object({ text: z.string() })).handler(/* ... */),
+  },
+}
+export type AppRouter = typeof router
 
 // Frontend (apps/web/src/modules/shared/lib/api.ts)
+import { createORPCClient } from '@orpc/client'
+import { RPCLink } from '@orpc/client/fetch'
+import { createTanstackQueryUtils } from '@orpc/tanstack-query'
+import type { RouterClient } from '@orpc/server'
 import type { AppRouter } from '@repo/api'
-import { hc } from 'hono/client'
-export const api = hc<AppRouter>('/')
 
-// Usage
-const res = await api.api.todos.$get()
-const data = await res.json()
+const link = new RPCLink({ url: `${window.location.origin}/api/rpc`, fetch: /* credentials */ })
+export const client: RouterClient<AppRouter> = createORPCClient(link)
+export const orpc = createTanstackQueryUtils(client)
+
+// Usage — direct call
+const { todos } = await client.todos.list()
+
+// Usage — TanStack Query
+const { data } = useQuery(orpc.todos.list.queryOptions())
+const create = useMutation(orpc.todos.create.mutationOptions())
+create.mutate({ text: 'ship it' })
+queryClient.invalidateQueries({ queryKey: orpc.todos.list.key() })
 ```
 
-Routes must use **method chaining** (not separate instances) for types to flow through.
+The RPC handler is mounted on Hono at `/api/rpc/*`; Better Auth keeps its own handler at `/api/auth/*`. OpenAPI docs are generated from the same router and served at `/api/docs`.
 
 ## Project Structure
 
 ```
 apps/
-  api/          Hono API server (routes, auth, db, config)
+  api/          oRPC router + procedures, auth, db, config (on Hono)
   web/          React SPA (TanStack Router, TanStack Query)
 server.ts       Production entry point (serves API + static SPA)
 ```

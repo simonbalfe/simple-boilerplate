@@ -1,6 +1,6 @@
 import { useUser } from '@shared/hooks/use-user'
+import { client } from '@shared/lib/api'
 import { authClient } from '@shared/lib/auth-client'
-import { api } from '@shared/lib/api'
 import { Button } from '@ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/components/card'
 import { toast } from 'sonner'
@@ -13,17 +13,11 @@ export function SettingsPage() {
     if (!confirm('Are you sure you want to delete your account? This cannot be undone.')) return
 
     try {
-      const res = await api.api.users.delete.$post({ json: { userId: user.id } })
-
-      if (!res.ok) {
-        toast.error('Failed to delete account')
-        return
-      }
-
+      await client.users.delete({ userId: user.id })
       await authClient.signOut()
       window.location.href = '/auth'
     } catch {
-      toast.error('Something went wrong')
+      toast.error('Failed to delete account')
     }
   }
 

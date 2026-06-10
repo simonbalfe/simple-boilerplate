@@ -1,62 +1,41 @@
 import { useUser } from '@shared/hooks/use-user'
-import { api } from '@shared/lib/api'
+import { orpc } from '@shared/lib/api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@ui/components/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ui/components/card'
 import { Input } from '@ui/components/input'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Check, Loader2, Plus, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-
-interface Todo {
-  id: string
-  text: string
-  completed: boolean
-  createdAt: string
-}
 
 export function DashboardPage() {
   const { user } = useUser()
   const queryClient = useQueryClient()
   const [newTodo, setNewTodo] = useState('')
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['todos'],
-    queryFn: async () => {
-      const res = await api.api.todos.$get()
-      return res.json() as Promise<{ success: boolean; todos: Todo[] }>
-    },
-  })
+  const invalidateTodos = () => queryClient.invalidateQueries({ queryKey: orpc.todos.list.key() })
 
-  const createMutation = useMutation({
-    mutationFn: async (text: string) => {
-      const res = await api.api.todos.$post({ json: { text } })
-      return res.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-      setNewTodo('')
-    },
-  })
+  const { data, isLoading } = useQuery(orpc.todos.list.queryOptions())
 
-  const toggleMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const res = await api.api.todos.toggle.$post({ json: { id } })
-      return res.json()
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
-  })
+  const createMutation = useMutation(
+    orpc.todos.create.mutationOptions({
+      onSuccess: () => {
+        invalidateTodos()
+        setNewTodo('')
+      },
+    }),
+  )
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const res = await api.api.todos.delete.$post({ json: { id } })
-      return res.json()
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
-  })
+  const toggleMutation = useMutation(
+    orpc.todos.toggle.mutationOptions({ onSuccess: invalidateTodos }),
+  )
+
+  const deleteMutation = useMutation(
+    orpc.todos.delete.mutationOptions({ onSuccess: invalidateTodos }),
+  )
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault()
-    if (newTodo.trim()) createMutation.mutate(newTodo.trim())
+    if (newTodo.trim()) createMutation.mutate({ text: newTodo.trim() })
   }
 
   const todos = data?.todos ?? []
@@ -100,7 +79,7 @@ export function DashboardPage() {
                 >
                   <button
                     type="button"
-                    onClick={() => toggleMutation.mutate(todo.id)}
+                    onClick={() => toggleMutation.mutate({ id: todo.id })}
                     className="flex size-5 shrink-0 items-center justify-center rounded border border-input"
                   >
                     {todo.completed ? (
@@ -116,7 +95,7 @@ export function DashboardPage() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => deleteMutation.mutate(todo.id)}
+                    onClick={() => deleteMutation.mutate({ id: todo.id })}
                     className="text-muted-foreground hover:text-destructive"
                   >
                     <Trash2 className="size-4" />
